@@ -12,8 +12,9 @@ jobs:
         key: flutter-cache-v1.5.4-hotfix.2
     - restore_cache:
         name: 从缓存恢复pub-cache
-        key: flutter-cache-{{ checksum "pubspec.yaml" }}
-        key: flutter-cache-
+        keys:
+        - flutter-cache-{{ checksum "pubspec.yaml" }}
+        - flutter-cache-
     - run:
         name: 安装Flutter环境
         command: "sh ./.circleci/install.sh"
