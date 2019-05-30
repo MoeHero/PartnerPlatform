@@ -59,7 +59,7 @@ jobs:
   deploy:
     docker:
       - image: circleci/ruby:latest
-      - image: cibuilds/github:latest
+      - image: circleci/golang:latest
 
     steps:
       - attach_workspace:
@@ -75,7 +75,9 @@ jobs:
             wget --post-data 'sendkey='$PUSHBEAR_SENDKEY'&desp=# [点击此处下载最新版]('$APP_DOWNLOAD_URL')&text=思迅合作伙伴平台App更新提醒 V'$APP_VERSION --output-document /dev/null https://pushbear.ftqq.com/sub
       - run:
           name: 部署应用到GitHub Release
-          command: "ghr -t ${GITHUB_TOKEN} -u $CIRCLE_PROJECT_USERNAME -r $CIRCLE_PROJECT_REPONAME -c $CIRCLE_SHA1 ./build/apk/"
+          command: |
+            go get github.com/tcnksm/ghr
+            ghr -t ${GITHUB_TOKEN} -u $CIRCLE_PROJECT_USERNAME -r $CIRCLE_PROJECT_REPONAME -c $CIRCLE_SHA1 ./build/apk/
 
 
 workflows:
