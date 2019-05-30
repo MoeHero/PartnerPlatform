@@ -1,0 +1,82 @@
+version: 2.1
+
+jobs:
+  build:
+    docker:
+    - image: circleci/android:api-28
+
+    steps:
+    - checkout
+    - restore_cache:
+        name: 从缓存恢复flutter-sdk
+        key: flutter-cache-v1.5.4-hotfix.2
+    - restore_cache:
+        name: 从缓存恢复pub-cache
+        key: flutter-cache-v1-{{ checksum "pubspec.yaml" }}
+    - run:
+        name: 安装Flutter环境
+        command: "sh ./.circleci/install.sh"
+    - save_cache:
+        name: 保存flutter-sdk到缓存
+        key: flutter-cache-v1.5.4-hotfix.2
+        paths:
+        - ~/flutter/.git
+        - ~/flutter/bin
+        - ~/flutter/packages
+    - save_cache:
+        name: 保存pub-cache到缓存
+        key: flutter-cache-v1-{{ checksum "pubspec.yaml" }}
+        paths:
+        - ~/flutter/.pub-cache
+    - run:
+        name: 获取版本号
+        command: "sh ./version.sh"
+    - restore_cache:
+        name: 从缓存恢复Gradle环境
+        key: gradle-cache-{{ checksum "android/build.gradle" }}-{{ checksum  "android/app/build.gradle" }}
+    - run:
+        name: 生成APK
+        command: |
+          ~/flutter/bin/flutter build apk --build-number $CIRCLE_BUILD_NUM --build-name $APP_VERSION
+          mkdir ./build/apk
+          mv ./build/app/outputs/apk/release/app-release.apk ./build/apk/$CIRCLE_PROJECT_REPONAME-V$APP_VERSION-$CIRCLE_BUILD_NUM.apk
+    - save_cache:
+        name: 保存Gradle环境到缓存
+        key: gradle-cache-{{ checksum "android/build.gradle" }}-{{ checksum  "android/app/build.gradle" }}
+        paths:
+        - ~/.gradle
+    - persist_to_workspace:
+        root: ./
+        paths:
+        - version.sh
+        - CHANGELOG.md
+        - build/apk
+
+  deploy:
+    docker:
+    - image: circleci/ruby:2.6.3
+
+    steps:
+    - attach_workspace:
+        at: ~/project
+    - run:
+        name: 获取版本号
+        command: "sh ./version.sh"
+    - run:
+        name: 部署应用到fir.im
+        command: |
+          gem install fir-cli
+          fir publish ./build/apk/$CIRCLE_PROJECT_REPONAME-V$APP_VERSION-$CIRCLE_PREVIOUS_BUILD_NUM.apk -R -T=$FIRIM_API_TOKEN -c=./CHANGELOG.md --no-open --password=$FIRIM_APP_PASSWORD
+          wget --post-data 'sendkey='$PUSHBEAR_SENDKEY'&desp=# [点击此处下载最新版]('$APP_DOWNLOAD_URL')&text=思迅合作伙伴平台App更新提醒 V'$APP_VERSION --output-document /dev/null https://pushbear.ftqq.com/sub
+
+workflows:
+  version: 2
+  build-deploy:
+    jobs:
+    - build
+    - deploy:
+        requires:
+        - build
+        filters:
+          branches:
+            only: master
