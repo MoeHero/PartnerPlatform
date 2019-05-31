@@ -77,7 +77,7 @@ jobs:
           name: 部署应用到GitHub Release
           command: |
             go get github.com/tcnksm/ghr
-            ghr -t ${GITHUB_TOKEN} -u $CIRCLE_PROJECT_USERNAME -r $CIRCLE_PROJECT_REPONAME -c $CIRCLE_SHA1 ./build/apk/
+            ghr -t ${GITHUB_TOKEN} -u $CIRCLE_PROJECT_USERNAME -r $CIRCLE_PROJECT_REPONAME -c $CIRCLE_SHA1 -n V$APP_VERSION ./build/apk/
 
 
 workflows:

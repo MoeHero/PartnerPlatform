@@ -175,7 +175,6 @@ class Const {
   static int get themeColorIndex => SpUtil.getInt('themeColorIndex');
   static set themeColorIndex(value) => SpUtil.putInt('themeColorIndex', value);
 
-//  static List<String> endUserList = <String>['1', '2'];
   static List<String> get endUserList => SpUtil.getStringList('endUserList');
   static set endUserList(value) => SpUtil.putStringList('endUserList', value);
 
