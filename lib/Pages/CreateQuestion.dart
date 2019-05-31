@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_picker/flutter_picker.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
+import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:oktoast/oktoast.dart';
 
 import '../Api/TSP.dart';
@@ -30,7 +31,7 @@ class _CreateQuestionPageState extends State<CreateQuestionPage> {
       _storeNumber,
       _questionDescription;
   int _typeIndex = 0, _creatorIndex = 0, _productTypeIndex, _productIndex;
-  bool _isCustomize = false, _isChain = false;
+  bool _isCustomize = false, _isChain = false, _isLoading = false;
   var _imageUrlList = <String>[];
   var _mobileController = TextEditingController(),
       _phoneController = TextEditingController(),
@@ -68,165 +69,170 @@ class _CreateQuestionPageState extends State<CreateQuestionPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Form(
-        key: _formKey,
-        child: Container(
-          height: double.infinity,
-          child: Stepper(
-            currentStep: _currentSteps,
-            onStepCancel: () {
-              setState(() => _currentSteps--);
-            },
-            onStepContinue: () async {
-              if (_currentSteps != 2) {
-                setState(() => _currentSteps++);
-                return;
-              }
-              if (!_formKey.currentState.validate()) return;
-              _formKey.currentState.save();
-
-              if (_creatorIndex == null) {
-                showToast('请选择联系人!');
-                return;
-              }
-              if (_productIndex == null) {
-                showToast('请选择产品!');
-                return;
-              }
-
-              var html = '';
-              for (var imageUrl in _imageUrlList) {
-                html += '<img src="$imageUrl" />';
-              }
-              if (_questionDescription.isNotEmpty) {
-                for (var line in _questionDescription.split('\n')) {
-                  html += '<p>$line</p>';
+      body: ModalProgressHUD(
+        child: Form(
+          key: _formKey,
+          child: Container(
+            height: double.infinity,
+            child: Stepper(
+              currentStep: _currentSteps,
+              onStepCancel: () {
+                setState(() => _currentSteps--);
+              },
+              onStepContinue: () async {
+                if (_currentSteps != 2) {
+                  setState(() => _currentSteps++);
+                  return;
                 }
-              }
+                if (!_formKey.currentState.validate()) return;
+                _formKey.currentState.save();
 
-              //TODO 加载中提示
-              var result = await createQuestion(
-                title: _title,
-                endUser: _endUser,
-                email: _email,
-                mobile: _mobile,
-                phone: _phone,
-                version: _version,
-                serialNumber: _serialNumber,
-                siteNumber: _siteNumber,
-                storeNumber: _storeNumber,
-                questionDescription: html,
-                creatorName: Const.contactsList[_creatorIndex].name,
-                product: _productMap[_productTypeIndex][_productIndex],
-                typeID: _questionTypeList[_typeIndex].id,
-                isCustomize: _isCustomize,
-                isChain: _isChain,
-              );
-              if (!result) {
-                showToast('请选择正确的联系人!');
-                return;
-              }
+                if (_creatorIndex == null) {
+                  showToast('请选择联系人!');
+                  return;
+                }
+                if (_productIndex == null) {
+                  showToast('请选择产品!');
+                  return;
+                }
 
-              if (!Const.endUserList.contains(_endUser)) {
-                var endUserList = <String>[];
-                endUserList.addAll(Const.endUserList);
-                endUserList.add(_endUser);
-                Const.endUserList = endUserList;
-              }
-              showToast('提交成功!');
-              Navigator.pop(context, true);
-            },
-            onStepTapped: (index) {
-              setState(() => _currentSteps = index);
-            },
-            steps: <Step>[
-              Step(
-                state: _getStepState(0),
-                isActive: _currentSteps >= 0,
-                title: Text(
-                  '基本信息',
-                  style: Theme.of(context).textTheme.subhead,
+                var html = '';
+                for (var imageUrl in _imageUrlList) {
+                  html += '<img src="$imageUrl" />';
+                }
+                if (_questionDescription.isNotEmpty) {
+                  for (var line in _questionDescription.split('\n')) {
+                    html += '<p>$line</p>';
+                  }
+                }
+
+                setState(() => _isLoading = true);
+                var result = await createQuestion(
+                  title: _title,
+                  endUser: _endUser,
+                  email: _email,
+                  mobile: _mobile,
+                  phone: _phone,
+                  version: _version,
+                  serialNumber: _serialNumber,
+                  siteNumber: _siteNumber,
+                  storeNumber: _storeNumber,
+                  questionDescription: html,
+                  creatorName: Const.contactsList[_creatorIndex].name,
+                  product: _productMap[_productTypeIndex][_productIndex],
+                  typeID: _questionTypeList[_typeIndex].id,
+                  isCustomize: _isCustomize,
+                  isChain: _isChain,
+                );
+                if (!result) {
+                  setState(() => _isLoading = false);
+                  showToast('请选择正确的联系人!');
+                  return;
+                }
+
+                if (!Const.endUserList.contains(_endUser)) {
+                  var endUserList = <String>[];
+                  endUserList.addAll(Const.endUserList);
+                  endUserList.add(_endUser);
+                  Const.endUserList = endUserList;
+                }
+                showToast('提交成功!');
+                Navigator.pop(context, true);
+              },
+              onStepTapped: (index) {
+                setState(() => _currentSteps = index);
+              },
+              steps: <Step>[
+                Step(
+                  state: _getStepState(0),
+                  isActive: _currentSteps >= 0,
+                  title: Text(
+                    '基本信息',
+                    style: Theme.of(context).textTheme.subhead,
+                  ),
+                  content: Wrap(
+                    children: <Widget>[
+                      _buildBasicInfo1(),
+                      _buildBasicInfo2(),
+                    ],
+                  ),
                 ),
-                content: Wrap(
+                Step(
+                  state: _getStepState(1),
+                  isActive: _currentSteps >= 1,
+                  title: Text(
+                    '产品信息',
+                    style: Theme.of(context).textTheme.subhead,
+                  ),
+                  content: _buildProductInfo(),
+                ),
+                Step(
+                  state: _getStepState(2),
+                  isActive: _currentSteps >= 2,
+                  title: Text(
+                    '问题描述',
+                    style: Theme.of(context).textTheme.subhead,
+                  ),
+                  content: _buildQuestionDescription(),
+                ),
+              ],
+              controlsBuilder: (
+                BuildContext context, {
+                VoidCallback onStepContinue,
+                VoidCallback onStepCancel,
+              }) {
+                return Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
                   children: <Widget>[
-                    _buildBasicInfo1(),
-                    _buildBasicInfo2(),
+                    _currentSteps != 0
+                        ? FlatButton(
+                            child: Text('上一步'),
+                            onPressed: onStepCancel,
+                            textColor: Theme.of(context).accentColor,
+                          )
+                        : Container(),
+                    Container(width: 10),
+                    RaisedButton(
+                      child: Text(_currentSteps != 2 ? '下一步' : '提 交'),
+                      onPressed: onStepContinue,
+                      color: Theme.of(context).primaryColor,
+                      textColor:
+                          Theme.of(context).primaryTextTheme.button.color,
+                    ),
                   ],
-                ),
-              ),
-              Step(
-                state: _getStepState(1),
-                isActive: _currentSteps >= 1,
-                title: Text(
-                  '产品信息',
-                  style: Theme.of(context).textTheme.subhead,
-                ),
-                content: _buildProductInfo(),
-              ),
-              Step(
-                state: _getStepState(2),
-                isActive: _currentSteps >= 2,
-                title: Text(
-                  '问题描述',
-                  style: Theme.of(context).textTheme.subhead,
-                ),
-                content: _buildQuestionDescription(),
-              ),
-            ],
-            controlsBuilder: (
-              BuildContext context, {
-              VoidCallback onStepContinue,
-              VoidCallback onStepCancel,
-            }) {
-              return Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: <Widget>[
-                  _currentSteps != 0
-                      ? FlatButton(
-                          child: Text('上一步'),
-                          onPressed: onStepCancel,
-                          textColor: Theme.of(context).accentColor,
-                        )
-                      : Container(),
-                  Container(width: 10),
-                  RaisedButton(
-                    child: Text(_currentSteps != 2 ? '下一步' : '提 交'),
-                    onPressed: onStepContinue,
-                    color: Theme.of(context).primaryColor,
-                    textColor: Theme.of(context).primaryTextTheme.button.color,
-                  ),
-                ],
-              );
-            },
+                );
+              },
+            ),
           ),
+          onWillPop: () async {
+            var result = await showDialog(
+              context: context,
+              builder: (context) {
+                return AlertDialog(
+                  content: Text('你确定要退出吗?'),
+                  actions: <Widget>[
+                    FlatButton(
+                      onPressed: () => Navigator.of(context).pop(false),
+                      child: Text(
+                        '取消',
+                        style: TextStyle(color: Theme.of(context).accentColor),
+                      ),
+                    ),
+                    FlatButton(
+                      onPressed: () => Navigator.of(context).pop(true),
+                      child: Text(
+                        '确定',
+                        style: TextStyle(color: Theme.of(context).accentColor),
+                      ),
+                    ),
+                  ],
+                );
+              },
+            );
+            return result == null ? false : result;
+          },
         ),
-        onWillPop: () async {
-          var result = await showDialog(
-            context: context,
-            builder: (context) {
-              return AlertDialog(
-                content: Text('你确定要退出吗?'),
-                actions: <Widget>[
-                  FlatButton(
-                    onPressed: () => Navigator.of(context).pop(false),
-                    child: Text(
-                      '取消',
-                      style: TextStyle(color: Theme.of(context).accentColor),
-                    ),
-                  ),
-                  FlatButton(
-                    onPressed: () => Navigator.of(context).pop(true),
-                    child: Text(
-                      '确定',
-                      style: TextStyle(color: Theme.of(context).accentColor),
-                    ),
-                  ),
-                ],
-              );
-            },
-          );
-          return result == null ? false : result;
-        },
+        inAsyncCall: _isLoading,
       ),
       appBar: AppBar(
         title: Text('创建问题'),

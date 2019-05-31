@@ -19,7 +19,7 @@ class QuestionPage extends StatefulWidget {
 }
 
 class _QuestionPageState extends State<QuestionPage>
-    with WidgetsBindingObserver {
+    with WidgetsBindingObserver, AutomaticKeepAliveClientMixin {
   int _page = 1;
   bool _isLoading = true, _hasNextPage = false;
   String _viewState, _eventValidation;
@@ -29,6 +29,9 @@ class _QuestionPageState extends State<QuestionPage>
   var refreshKey = GlobalKey<EasyRefreshState>();
   var _headerKey = GlobalKey<RefreshHeaderState>();
   var _footerKey = GlobalKey<RefreshFooterState>();
+
+  @override
+  bool get wantKeepAlive => true;
 
   @override
   void initState() {
