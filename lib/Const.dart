@@ -1,7 +1,6 @@
 import 'package:azlistview/azlistview.dart';
 import 'package:dio/dio.dart';
 import 'package:flustars/flustars.dart';
-import 'package:flutter/material.dart';
 import 'package:lpinyin/lpinyin.dart';
 
 import './Api/Dio.dart';
@@ -9,16 +8,16 @@ import './Api/Dio.dart';
 class Const {
   static var isConstInit = false;
 
-  static final colorMap = <String, Color>{
-//    'OLED模式(WIP)': Colors.black,
-    '胖次蓝': Colors.blue,
-    '简洁白(WIP)': Colors.grey[100],
-    '少女粉': Colors.pink[300],
-    '姨妈红': Colors.red,
-    '咸蛋黄': Colors.yellow[700],
-    '早苗绿': Colors.green[500],
-    '基佬紫': Colors.purple,
-  };
+//  static final colorMap = <String, Color>{
+////    'OLED模式(WIP)': Colors.black,
+//    '胖次蓝': Colors.blue,
+//    '简洁白(WIP)': Colors.grey[100],
+//    '少女粉': Colors.pink[300],
+//    '姨妈红': Colors.red,
+//    '咸蛋黄': Colors.yellow[700],
+//    '早苗绿': Colors.green[500],
+//    '基佬紫': Colors.purple,
+//  };
 
   static final productMap = {
 //商超
@@ -172,8 +171,8 @@ class Const {
   static String get password => SpUtil.getString('password');
   static set password(value) => SpUtil.putString('password', value);
 
-  static int get themeColorIndex => SpUtil.getInt('themeColorIndex');
-  static set themeColorIndex(value) => SpUtil.putInt('themeColorIndex', value);
+  static int get themeIndex => SpUtil.getInt('themeIndex', defValue: -1);
+  static set themeIndex(value) => SpUtil.putInt('themeIndex', value);
 
 //  static List<String> endUserList = <String>['1', '2'];
   static List<String> get endUserList => SpUtil.getStringList('endUserList');

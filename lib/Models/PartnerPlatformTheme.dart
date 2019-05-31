@@ -1,0 +1,68 @@
+import 'package:flutter/material.dart';
+
+class PartnerPlatformTheme {
+  String themeName;
+  ThemeData themeData;
+  Color themeColor;
+  bool isDefault;
+
+  PartnerPlatformTheme({
+    @required this.themeName,
+    @required this.themeData,
+    this.themeColor,
+    this.isDefault = false,
+  }) {
+    themeColor ??= themeData.primaryColor;
+  }
+
+  static PartnerPlatformTheme getDefaultTheme() {
+    for (var theme in themeMap) {
+      if (theme.isDefault) return theme;
+    }
+    return themeMap[0];
+  }
+
+  static final themeMap = <PartnerPlatformTheme>[
+    PartnerPlatformTheme(
+      themeName: '夜间模式',
+      themeData: ThemeData(brightness: Brightness.dark),
+    ),
+    PartnerPlatformTheme(
+      themeName: 'OLED模式(WIP)',
+      themeData: ThemeData(
+        primaryColor: Colors.black,
+        accentColor: Colors.black,
+        brightness: Brightness.dark,
+      ),
+    ),
+    PartnerPlatformTheme(
+      themeName: '胖次蓝',
+      themeData: ThemeData(primaryColor: Colors.blue),
+      isDefault: true,
+    ),
+    PartnerPlatformTheme(
+      themeName: '简洁白(WIP)',
+      themeData: ThemeData(primaryColor: Colors.grey[100]),
+    ),
+    PartnerPlatformTheme(
+      themeName: '少女粉',
+      themeData: ThemeData(primaryColor: Colors.pink[300]),
+    ),
+    PartnerPlatformTheme(
+      themeName: '姨妈红',
+      themeData: ThemeData(primaryColor: Colors.red),
+    ),
+    PartnerPlatformTheme(
+      themeName: '咸蛋黄',
+      themeData: ThemeData(primaryColor: Colors.yellow[700]),
+    ),
+    PartnerPlatformTheme(
+      themeName: '早苗绿',
+      themeData: ThemeData(primaryColor: Colors.green[500]),
+    ),
+    PartnerPlatformTheme(
+      themeName: '基佬紫',
+      themeData: ThemeData(primaryColor: Colors.purple),
+    ),
+  ];
+}
