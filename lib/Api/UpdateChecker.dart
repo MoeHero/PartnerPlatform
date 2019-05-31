@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
-import 'package:package_info/package_info.dart';
+import 'package:get_version/get_version.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -9,52 +9,41 @@ import '../Api/Dio.dart';
 
 class UpdateChecker {
   static check(context) async {
-    final packageInfo = await PackageInfo.fromPlatform();
-
-    var currentBuildNumber = int.parse(packageInfo.buildNumber);
-    var newBuildNumber;
-    var assetID;
-
     final Response<Map> response = await dio.get(
-      'https://api.github.com/repos/MoeHero/PartnerPlatform/releases/latest',
+      'http://api.fir.im/apps/latest/5cebc3fcca87a8382db0a625',
       queryParameters: {
-        'access_token': '21edbad558a768edb9186b828e1f5048eed55c39',
+        'api_token': '468c0c5fd2fda856967d9a9916bd7885',
       },
     );
 
-    for (var asset in response.data['assets']) {
-      RegExp regExp = new RegExp(r'PartnerPlatform-.+?-(\d+?)\.apk');
-      newBuildNumber = int.parse(regExp.firstMatch(asset['name']).group(1));
-      assetID = asset['id'];
-    }
-    if (newBuildNumber <= currentBuildNumber) return;
+    if (int.parse(response.data['build']) <=
+        int.parse(await GetVersion.projectCode)) return;
     _showDialog(
       context,
-      response.data['name'],
-      response.data['body'],
-      assetID,
+      response.data['install_url'],
+      response.data['changelog'],
     );
   }
 
-  static void _showDialog(context, version, body, assetID) async {
+  static void _showDialog(context, installUrl, changelog) async {
     showDialog(
       context: context,
       barrierDismissible: false,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('合作伙伴平台更新 ' + version),
-          content: Text(body),
+          title: Text('发现新版本'),
+          content: Text(changelog),
           actions: <Widget>[
             FlatButton(
               child: Text(
-                '推迟',
+                '暂不更新',
                 style: TextStyle(color: Theme.of(context).hintColor),
               ),
               onPressed: () => Navigator.of(context).pop(),
             ),
             FlatButton(
               child: Text('立即更新'),
-              onPressed: () => _update(context, version, assetID),
+              onPressed: () => _update(context, installUrl),
             )
           ],
         );
@@ -62,15 +51,13 @@ class UpdateChecker {
     );
   }
 
-  static void _update(context, version, assetID) async {
+  static void _update(context, installUrl) async {
     if ((await PermissionHandler().requestPermissions(
             [PermissionGroup.storage]))[PermissionGroup.storage] !=
         PermissionStatus.granted) return;
     final taskID = await FlutterDownloader.enqueue(
-      url:
-          'https://api.github.com/repos/MoeHero/PartnerPlatform/releases/assets/$assetID?access_token=21edbad558a768edb9186b828e1f5048eed55c39',
+      url: installUrl,
       savedDir: (await getExternalStorageDirectory()).path,
-      headers: {'Accept': 'application/octet-stream'},
       showNotification: false,
     );
     Navigator.of(context).pop();
@@ -79,7 +66,7 @@ class UpdateChecker {
       barrierDismissible: false,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('合作伙伴平台更新 ' + version),
+          title: Text('下载新版本'),
           content: _Download(taskID),
           actions: <Widget>[
             FlatButton(
