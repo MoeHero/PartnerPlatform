@@ -5,6 +5,7 @@ import 'package:oktoast/oktoast.dart';
 
 import './Question.dart';
 import './UniversalPassword.dart';
+import '../Api/UpdateChecker.dart';
 import '../Modules/QuestionFilter.dart';
 import '../Modules/TSPDrawer.dart';
 
@@ -21,6 +22,7 @@ class _MainPageState extends State<MainPage> {
   @override
   void initState() {
     super.initState();
+    UpdateChecker.check(context);
     _pageList.addAll(
       <Page>[
         Page(
