@@ -8,6 +8,7 @@ import './UniversalPassword.dart';
 import '../Api/UpdateChecker.dart';
 import '../Modules/QuestionFilter.dart';
 import '../Modules/TSPDrawer.dart';
+import '../Pages/QuestionDetails.dart';
 
 class MainPage extends StatefulWidget {
   @override
@@ -15,6 +16,11 @@ class MainPage extends StatefulWidget {
 }
 
 class _MainPageState extends State<MainPage> {
+  static const messageChannel = const BasicMessageChannel(
+    'moehero.sixunpp.com/url_schema',
+    StandardMessageCodec(),
+  );
+
   int _pageIndex = 0, _lastClickTime = 0;
   var _pageController = PageController(initialPage: 0);
   var _pageList = <Page>[];
@@ -22,6 +28,8 @@ class _MainPageState extends State<MainPage> {
   @override
   void initState() {
     super.initState();
+    receiveMessage();
+
     UpdateChecker.check(context);
     _pageList.addAll(
       <Page>[
@@ -37,6 +45,27 @@ class _MainPageState extends State<MainPage> {
         ),
       ],
     );
+  }
+
+  void receiveMessage() {
+    messageChannel.setMessageHandler((message) async {
+      switch (getName(message)) {
+        case 'goQuestion':
+          QuestionDetailsPage.show(
+            context,
+            message.substring(message.indexOf('?id=') + 4),
+          );
+          break;
+      }
+    });
+    messageChannel.send('Init');
+  }
+
+  String getName(String s) {
+    if (s.indexOf('?') == -1)
+      return s;
+    else
+      return s.substring(0, s.indexOf('?'));
   }
 
   @override

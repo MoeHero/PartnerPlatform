@@ -2,6 +2,7 @@ import 'package:common_utils/common_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
+import 'package:oktoast/oktoast.dart';
 
 import '../Api/TSP.dart';
 import '../Models/QuestionFilterOption.dart';
@@ -137,6 +138,13 @@ class _QuestionPageState extends State<QuestionPage>
       child: InkWell(
         onTap: () {
           QuestionDetailsPage.show(context, info.id);
+        },
+        onLongPress: () {
+          Clipboard.setData(
+            new ClipboardData(
+                text: 'https://bh.moehero.com/sixunpp.html?id=' + info.id),
+          );
+          showToast('复制成功!');
         },
         child: Row(
           children: <Widget>[
