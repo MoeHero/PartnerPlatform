@@ -20,7 +20,7 @@ class QuestionFilterDialog extends Dialog {
           children: <Widget>[
             Container(
               decoration: ShapeDecoration(
-                color: Theme.of(context).canvasColor,
+                color: Theme.of(context).dialogBackgroundColor,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8),
                 ),
