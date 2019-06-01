@@ -30,8 +30,12 @@ class PartnerPlatformTheme {
     PartnerPlatformTheme(
       themeName: 'OLED模式(WIP)',
       themeData: ThemeData(
-        primaryColor: Colors.black,
-        accentColor: Colors.black,
+        primaryColor: Colors.grey[900],
+        accentColor: Colors.grey,
+        cardColor: Colors.grey[900],
+        bottomAppBarColor: Colors.grey[900],
+        dialogBackgroundColor: Colors.black,
+        canvasColor: Colors.black,
         brightness: Brightness.dark,
       ),
     ),
@@ -53,16 +57,24 @@ class PartnerPlatformTheme {
       themeData: ThemeData(primaryColor: Colors.red),
     ),
     PartnerPlatformTheme(
+      themeName: '活力橘',
+      themeData: ThemeData(primaryColor: Colors.orangeAccent[700]),
+    ),
+    PartnerPlatformTheme(
       themeName: '咸蛋黄',
-      themeData: ThemeData(primaryColor: Colors.yellow[700]),
+      themeData: ThemeData(primaryColor: Colors.yellow),
     ),
     PartnerPlatformTheme(
       themeName: '早苗绿',
-      themeData: ThemeData(primaryColor: Colors.green[500]),
+      themeData: ThemeData(primaryColor: Colors.green[600]),
     ),
     PartnerPlatformTheme(
       themeName: '基佬紫',
       themeData: ThemeData(primaryColor: Colors.purple),
+    ),
+    PartnerPlatformTheme(
+      themeName: '咖啡棕',
+      themeData: ThemeData(primaryColor: Colors.brown),
     ),
   ];
 }
