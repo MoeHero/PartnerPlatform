@@ -22,7 +22,7 @@ void main() {
       data: (brightness) => ThemeData(brightness: brightness),
       themedWidgetBuilder: (context, theme) {
         return MaterialApp(
-          title: '思迅合作伙伴平台',
+          title: '合作伙伴平台',
           theme: theme,
           localizationsDelegates: [
             GlobalMaterialLocalizations.delegate,

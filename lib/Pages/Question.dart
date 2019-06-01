@@ -2,6 +2,7 @@ import 'package:common_utils/common_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
+import 'package:oktoast/oktoast.dart';
 
 import '../Api/TSP.dart';
 import '../Models/QuestionFilterOption.dart';
@@ -19,7 +20,7 @@ class QuestionPage extends StatefulWidget {
 }
 
 class _QuestionPageState extends State<QuestionPage>
-    with WidgetsBindingObserver {
+    with WidgetsBindingObserver, AutomaticKeepAliveClientMixin {
   int _page = 1;
   bool _isLoading = true, _hasNextPage = false;
   String _viewState, _eventValidation;
@@ -29,6 +30,9 @@ class _QuestionPageState extends State<QuestionPage>
   var refreshKey = GlobalKey<EasyRefreshState>();
   var _headerKey = GlobalKey<RefreshHeaderState>();
   var _footerKey = GlobalKey<RefreshFooterState>();
+
+  @override
+  bool get wantKeepAlive => true;
 
   @override
   void initState() {
@@ -134,6 +138,13 @@ class _QuestionPageState extends State<QuestionPage>
       child: InkWell(
         onTap: () {
           QuestionDetailsPage.show(context, info.id);
+        },
+        onLongPress: () {
+          Clipboard.setData(
+            new ClipboardData(
+                text: 'https://bh.moehero.com/sixunpp.html?id=' + info.id),
+          );
+          showToast('复制成功!');
         },
         child: Row(
           children: <Widget>[

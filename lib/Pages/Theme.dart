@@ -2,6 +2,7 @@ import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:flutter/material.dart';
 
 import '../Const.dart';
+import '../Models/PartnerPlatformTheme.dart';
 
 class ThemePage extends StatefulWidget {
   @override
@@ -14,33 +15,33 @@ class _ThemePageState extends State<ThemePage> {
   @override
   void initState() {
     super.initState();
-    _selectIndex = Const.themeColorIndex;
+    _selectIndex = Const.themeIndex;
   }
 
   @override
   Widget build(BuildContext context) {
     var colorOption = <Widget>[
-      ListTile(
-        title: Wrap(
-          crossAxisAlignment: WrapCrossAlignment.end,
-          children: <Widget>[
-            Container(width: 20, height: 20, color: Colors.black),
-            Container(width: 10),
-            Text('夜间模式'),
-          ],
-        ),
-        trailing: Theme.of(context).brightness == Brightness.dark
-            ? Icon(Icons.check)
-            : OutlineButton(
-                child: Text('切换'),
-                onPressed: () {
-                  Const.themeColorIndex = -1;
-                  setState(() => _selectIndex = -1);
-                  DynamicTheme.of(context).setBrightness(Brightness.dark);
-                },
-              ),
-      ),
-      Divider(height: 1),
+//      ListTile(
+//        title: Wrap(
+//          crossAxisAlignment: WrapCrossAlignment.end,
+//          children: <Widget>[
+//            Container(width: 20, height: 20, color: Colors.black),
+//            Container(width: 10),
+//            Text('夜间模式'),
+//          ],
+//        ),
+//        trailing: Theme.of(context).brightness == Brightness.dark
+//            ? Icon(Icons.check)
+//            : OutlineButton(
+//                child: Text('切换'),
+//                onPressed: () {
+////                  Const.themeIndex = -1;
+//                  setState(() => _selectIndex = -1);
+//                  DynamicTheme.of(context).setBrightness(Brightness.dark);
+//                },
+//              ),
+//      ),
+//      Divider(height: 1),
     ];
     colorOption.addAll(_buildColorOption());
 
@@ -54,17 +55,16 @@ class _ThemePageState extends State<ThemePage> {
 
   List<Widget> _buildColorOption() {
     var _colorOptionList = <Widget>[];
-    for (var i = 0; i < Const.colorMap.length; i++) {
-      final key = Const.colorMap.keys.toList()[i];
-      final color = Const.colorMap[key];
+    for (var i = 0; i < PartnerPlatformTheme.themeMap.length; i++) {
+      final theme = PartnerPlatformTheme.themeMap[i];
       _colorOptionList.addAll([
         ListTile(
           title: Wrap(
             crossAxisAlignment: WrapCrossAlignment.end,
             children: <Widget>[
-              Container(width: 20, height: 20, color: color),
+              Container(width: 20, height: 20, color: theme.themeColor),
               Container(width: 10),
-              Text(key),
+              Text(theme.themeName),
             ],
           ),
           trailing: i == _selectIndex
@@ -72,14 +72,8 @@ class _ThemePageState extends State<ThemePage> {
               : OutlineButton(
                   child: Text('切换'),
                   onPressed: () {
-                    DynamicTheme.of(context).setThemeData(
-                      ThemeData(
-                        primaryColor: color,
-                        accentColor: color,
-                        //TODO COLOR
-                      ),
-                    );
-                    Const.themeColorIndex = i;
+                    DynamicTheme.of(context).setThemeData(theme.themeData);
+                    Const.themeIndex = i;
                     setState(() => _selectIndex = i);
                   },
                 ),

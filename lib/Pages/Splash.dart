@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import '../Api/Dio.dart';
 import '../Api/TSP.dart';
 import '../Const.dart';
+import '../Models/PartnerPlatformTheme.dart';
 
 class SplashPage extends StatefulWidget {
   @override
@@ -21,14 +22,11 @@ class _SplashPageState extends State<SplashPage> {
   void _init() async {
     await initDio();
     await SpUtil.getInstance();
-    if (Const.themeColorIndex != -1) {
-      DynamicTheme.of(context).setThemeData(
-        ThemeData(
-          primaryColor: Const
-              .colorMap[Const.colorMap.keys.toList()[Const.themeColorIndex]],
-        ),
-      );
-    }
+    DynamicTheme.of(context).setThemeData(
+      Const.themeIndex != -1
+          ? PartnerPlatformTheme.themeMap[Const.themeIndex].themeData
+          : PartnerPlatformTheme.getDefaultTheme().themeData,
+    );
 
     var needLogin = !await isLogin();
     if (needLogin && Const.password.isNotEmpty) {
