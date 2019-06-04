@@ -141,8 +141,9 @@ class _QuestionPageState extends State<QuestionPage>
         },
         onLongPress: () {
           Clipboard.setData(
-            new ClipboardData(
-                text: 'https://bh.moehero.com/sixunpp.html?id=' + info.id),
+            ClipboardData(
+              text: 'https://bh.moehero.com/sixunpp.html?id=' + info.id,
+            ),
           );
           showToast('复制成功!');
         },
