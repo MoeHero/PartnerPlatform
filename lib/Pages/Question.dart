@@ -140,12 +140,44 @@ class _QuestionPageState extends State<QuestionPage>
           QuestionDetailsPage.show(context, info.id);
         },
         onLongPress: () {
-          Clipboard.setData(
-            ClipboardData(
-              text: 'https://bh.moehero.com/sixunpp.html?id=' + info.id,
-            ),
-          );
-          showToast('复制成功!');
+          showModalBottomSheet(
+              context: context,
+              builder: (BuildContext context) {
+                return Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    ListTile(
+                      leading: Icon(Icons.bookmark),
+                      title: Text('复制问题编号'),
+                      onTap: () async {
+                        Clipboard.setData(ClipboardData(text: info.id));
+                        showToast('复制成功');
+                        Navigator.pop(context);
+                      },
+                    ),
+                    Divider(height: 1),
+                    ListTile(
+                      leading: Icon(Icons.share),
+                      title: Text('复制分享链接'),
+                      onTap: () async {
+                        Clipboard.setData(
+                          ClipboardData(
+                            text: 'https://bh.moehero.com/sixunpp.html?id=' +
+                                info.id,
+                          ),
+                        );
+                        showToast('复制成功');
+                        Navigator.pop(context);
+                      },
+                    ),
+                    Container(height: 10, color: Colors.grey[200]),
+                    ListTile(
+                      title: Center(child: Text('取  消')),
+                      onTap: () => Navigator.pop(context),
+                    ),
+                  ],
+                );
+              });
         },
         child: Row(
           children: <Widget>[
