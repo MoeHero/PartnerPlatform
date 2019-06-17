@@ -1,5 +1,5 @@
 ﻿name: PartnerPlatform
-description: 第三方思迅合作伙伴平台APP
+description: 思迅合作伙伴平台APP
 
 environment:
   sdk: ">=2.1.0 <3.0.0"
