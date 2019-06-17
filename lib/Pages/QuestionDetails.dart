@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:math';
 
+import 'package:PartnerPlatform/Modules/GalleryPhotoViewWrapper.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:common_utils/common_utils.dart';
 import 'package:convert/convert.dart';
@@ -18,7 +19,6 @@ import '../Const.dart';
 import '../Models/QuestionInfo.dart';
 import '../Modules/CloseQuestion.dart';
 import '../Modules/ImageList.dart';
-import '../Pages/PinchZoomImage.dart';
 
 class QuestionDetailsPage extends StatefulWidget {
   final String _id;
@@ -46,6 +46,7 @@ class _QuestionDetailsPageState extends State<QuestionDetailsPage> {
   final _formKey = GlobalKey<FormState>();
   final _headerKey = GlobalKey<RefreshHeaderState>();
   final _answerFocusNode = FocusNode();
+  final _galleryItems = Map<String, ImageProvider>();
 
   final TextEditingController _controller = TextEditingController();
   final GlobalKey _textFieldKey = GlobalKey();
@@ -597,16 +598,21 @@ class _QuestionDetailsPageState extends State<QuestionDetailsPage> {
         );
       }
 
+      final tag = hex.encode(md5.convert(Utf8Encoder().convert(src)).bytes);
+
+      _galleryItems.addAll({tag: imageProvider});
+
       return Padding(
         padding: EdgeInsets.symmetric(vertical: 5),
         child: InkWell(
-          child: Hero(
-            tag: hex.encode(md5.convert(Utf8Encoder().convert(src)).bytes),
-            child: image,
-          ),
+          child: Hero(tag: tag, child: image),
           splashColor: Colors.transparent,
           highlightColor: Colors.transparent,
-          onTap: () => PinchZoomImagePage.show(context, imageProvider),
+          onTap: () => GalleryPhotoViewWrapper.show(
+                context,
+                _galleryItems.keys.toList().indexOf(tag),
+                _galleryItems,
+              ),
         ),
       );
     }

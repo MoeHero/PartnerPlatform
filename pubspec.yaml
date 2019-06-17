@@ -19,7 +19,7 @@ dependencies:
   flutter_easyrefresh: ^1.2.7
   expandable: ^2.1.1
   flutter_html: ^0.9.6
-  extended_image: ^0.3.1
+  photo_view: ^0.3.3
   image_picker: ^0.6.0+1
   flutter_rating: ^0.0.2
   flutter_picker: ^1.0.11

@@ -55,12 +55,16 @@ class _UploadImageState extends State<UploadImage> {
                 ),
               ),
         _isError
-            ? Container()
-            : Center(
+            ? Center(
                 child: Container(
-                  child: Icon(Icons.error_outline, size: 50),
+                  child: Icon(
+                    Icons.error_outline,
+                    size: 50,
+                    color: Colors.grey[350],
+                  ),
                 ),
-              ),
+              )
+            : Container(),
       ],
     );
   }
