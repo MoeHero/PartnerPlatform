@@ -10,12 +10,15 @@ class ThemePage extends StatefulWidget {
 }
 
 class _ThemePageState extends State<ThemePage> {
-  var _selectIndex;
+  int _selectIndex;
 
   @override
   void initState() {
     super.initState();
     _selectIndex = Const.themeIndex;
+    if (_selectIndex != -1) return;
+    _selectIndex = PartnerPlatformTheme.themeMap.indexWhere((t) => t.isDefault);
+    Const.themeIndex = _selectIndex;
   }
 
   @override
