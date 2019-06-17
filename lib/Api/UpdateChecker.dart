@@ -6,6 +6,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import '../Api/Dio.dart';
+import '../Const.dart';
 
 class UpdateChecker {
   static check(context) async {
@@ -17,7 +18,7 @@ class UpdateChecker {
     );
 
     if (int.parse(response.data['build']) <=
-        int.parse(await GetVersion.projectCode)) return;
+        int.parse(Const.buildNumber)) return;
     _showDialog(
       context,
       response.data['install_url'],

@@ -58,8 +58,8 @@ jobs:
 
   deploy:
     docker:
-      - image: circleci/ruby:latest
-      - image: circleci/golang:latest
+      - image: circleci/ruby:2.6.3
+      - image: circleci/golang:1.9.7
 
     steps:
       - attach_workspace:
@@ -78,7 +78,6 @@ jobs:
           command: |
             go get github.com/tcnksm/ghr
             ghr -t ${GITHUB_TOKEN} -u $CIRCLE_PROJECT_USERNAME -r $CIRCLE_PROJECT_REPONAME -c $CIRCLE_SHA1 -n V$APP_VERSION ./build/apk/
-
 
 workflows:
   version: 2

@@ -1,6 +1,7 @@
 import 'package:azlistview/azlistview.dart';
 import 'package:dio/dio.dart';
 import 'package:flustars/flustars.dart';
+import 'package:get_version/get_version.dart';
 import 'package:lpinyin/lpinyin.dart';
 
 import './Api/Dio.dart';
@@ -161,6 +162,8 @@ class Const {
   static var avatarUrl =
       'http://www2.sixun.com.cn/Content/Images/icon/avatar1.png';
   static var realName = '';
+  static var version = '';
+  static var buildNumber = '';
 
   static String get agentID => SpUtil.getString('agentID');
   static set agentID(value) => SpUtil.putString('agentID', value);
@@ -186,6 +189,9 @@ class Const {
 
     await _getContactsList();
     await _getUserInfo();
+
+    version = await GetVersion.projectVersion;
+    buildNumber = await GetVersion.projectCode;
   }
 
   static Future<void> _getContactsList() async {

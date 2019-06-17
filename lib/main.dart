@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:oktoast/oktoast.dart';
 
+import './Pages/About.dart';
 import './Pages/CreateQuestion.dart';
 import './Pages/Login.dart';
 import './Pages/Main.dart';
@@ -39,6 +40,7 @@ void main() {
             '/setting': (_) => SettingPage(),
             '/software_hide': (_) => SoftwareHidePage(),
             '/theme': (_) => ThemePage(),
+            '/about': (_) => AboutPage(),
           },
         );
       },

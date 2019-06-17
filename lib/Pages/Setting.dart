@@ -18,7 +18,7 @@ class _SettingPageState extends State<SettingPage> {
             title: Text('隐藏&分类(WIP)'),
             trailing: Icon(Icons.navigate_next, color: Colors.grey),
             onTap: () {
-              Navigator.pushNamed(context, '/software_hide');
+//              Navigator.pushNamed(context, '/software_hide');
             },
           ),
           Divider(height: 1),
@@ -33,6 +33,14 @@ class _SettingPageState extends State<SettingPage> {
             trailing: Icon(Icons.navigate_next, color: Colors.grey),
             onTap: () {
               Navigator.pushNamed(context, '/theme');
+            },
+          ),
+          Container(height: 10, color: Colors.grey[200]),
+          ListTile(
+            title: Text('关于 合作伙伴平台'),
+            trailing: Icon(Icons.navigate_next, color: Colors.grey),
+            onTap: () {
+              Navigator.pushNamed(context, '/about');
             },
           ),
           Divider(height: 1),
